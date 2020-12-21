@@ -3,11 +3,8 @@ using ClimateMachine
 using ClimateMachine.Mesh.Grids
 using ClimateMachine.Mesh.Topologies
 using ClimateMachine.MPIStateArrays
-using ClimateMachine.Abstractions
-import ClimateMachine.Abstractions: DiscontinuousSpectralElementGrid
 using Impero, Printf, MPI, LinearAlgebra, Statistics, GaussQuadrature
-include(pwd() * "/sandbox/test_utils.jl")
-include(pwd() * "/sandbox/abstract_kernels.jl")
+include(pwd() * "/test/test_utils.jl")
 
 ClimateMachine.init()
 const ArrayType = ClimateMachine.array_type()

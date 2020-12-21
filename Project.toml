@@ -5,9 +5,12 @@ version = "0.1.0"
 
 [deps]
 ClimateMachine = "777c4786-024f-11e9-21a3-85d5d4106250"
+GaussQuadrature = "d54b0c1a-921d-58e0-8e36-89d8069c0969"
 Impero = "6b9fe585-d366-4829-9dfa-295221ce217c"
 KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
+MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
