@@ -1,0 +1,4 @@
+name = "ImperoHooks"
+uuid = "0838fafa-aa35-4ec8-8e70-f77d36dc84d3"
+authors = ["James Schloss <jrs.schloss@gmail.com>"]
+version = "0.1.0"
