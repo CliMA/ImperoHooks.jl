@@ -4,6 +4,7 @@ using ClimateMachine.Mesh.Grids
 using ClimateMachine.Mesh.Topologies
 using ClimateMachine.MPIStateArrays
 using ImperoHooks
+import ImperoHooks: launch_volume_gradient!, launch_interface_gradient!
 using Impero, Printf, MPI, LinearAlgebra, Statistics, GaussQuadrature
 include(pwd() * "/test/test_utils.jl")
 include(pwd() * "/test/gradient_test_utils.jl")

@@ -6,7 +6,8 @@ using ClimateMachine.MPIStateArrays
 using ClimateMachine.Diagnostics
 using ClimateMachine.Mesh.Grids
 using ClimateMachine.Mesh.Topologies
-using ClimateMachine.Abstractions
+
+using ImperoHooks
 
 import ClimateMachine.Mesh.Grids: DiscontinuousSpectralElementGrid
 
