@@ -6,6 +6,7 @@ version = "0.1.0"
 [deps]
 ClimateMachine = "777c4786-024f-11e9-21a3-85d5d4106250"
 GaussQuadrature = "d54b0c1a-921d-58e0-8e36-89d8069c0969"
+GraphRecipes = "bd48cda9-67a9-57be-86fa-5b3c104eda73"
 Impero = "6b9fe585-d366-4829-9dfa-295221ce217c"
 KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
 MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"
