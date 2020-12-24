@@ -10,7 +10,10 @@ Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 GaussQuadrature = "d54b0c1a-921d-58e0-8e36-89d8069c0969"
 GraphRecipes = "bd48cda9-67a9-57be-86fa-5b3c104eda73"
+<<<<<<< HEAD
 ImageTransformations = "02fcd773-0e25-5acc-982a-7f6622650795"
+=======
+>>>>>>> cc21a4ab6463abe1f5c907b6cfe55cebdc39a6ca
 Impero = "6b9fe585-d366-4829-9dfa-295221ce217c"
 KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
 MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"

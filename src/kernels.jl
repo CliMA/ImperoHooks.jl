@@ -16,7 +16,7 @@ const _JcV = Grids._JcV
 const _n1, _n2, _n3 = Grids._n1, Grids._n2, Grids._n3
 const _sM, _vMI = Grids._sM, Grids._vMI
 
-function launch_volume_divergence!(grid::G, flux_divergence, flux; dependencies = nothing) where {G <: AbstractGrid}
+function launch_volume_divergence!(flux_divergence, flux, grid::G; dependencies = nothing) where {G <: AbstractGrid}
 
     nrealelem = length(grid.interiorelems)
     device = array_device(flux)
@@ -180,9 +180,9 @@ we are computing interface gradients on boundaries which are interior (exterior 
 to the _parallel_ boundary.
 """
 function launch_interface_divergence!(
-    grid::G,
     flux_divergence,
-    flux;
+    flux,
+    grid::G;
     dependencies = nothing,
 ) where {G <: AbstractGrid}
     # MPI
@@ -353,7 +353,7 @@ fluxes, respectively.  interface_tendency!
     end
 end
 
-function launch_volume_gradient!(grid::G, gradient, state; dependencies = nothing) where {G <: AbstractGrid}
+function launch_volume_gradient!(gradient, state, grid::G; dependencies = nothing) where {G <: AbstractGrid}
 
     nrealelem = length(grid.interiorelems)
     device = array_device(gradient)
@@ -501,9 +501,9 @@ we are computing interface gradients on boundaries which are interior (exterior 
 to the _parallel_ boundary.
 """
 function launch_interface_gradient!(
-    grid::G,
     gradient,
-    state;
+    state,
+    grid::G;
     dependencies = nothing,
 ) where {G <: AbstractGrid}
     # MPI
