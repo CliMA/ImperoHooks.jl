@@ -5,6 +5,8 @@ using ClimateMachine.Mesh.Topologies
 using ClimateMachine.MPIStateArrays
 using Impero, Printf, MPI, LinearAlgebra, Statistics, GaussQuadrature
 using ImperoHooks
+using Makie
+using Observables
 
 ClimateMachine.init()
 const ArrayType = ClimateMachine.array_type()
@@ -25,4 +27,12 @@ grid = DiscontinuousSpectralElementGrid(
         meshwarp = Topologies.cubedshellwarp,
 )
 
-visualize(grid)
+scene = visualize(grid)
+## save interaction
+fps = 10
+record(scene, pwd() * "/sphere.mp4"; framerate = fps) do io
+    for i = 1:200
+        sleep(1/fps)
+        recordframe!(io)
+    end
+end

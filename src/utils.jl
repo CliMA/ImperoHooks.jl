@@ -58,9 +58,9 @@ Get the cell-centers of every element in the grid
 function cellcenters(grid::DiscontinuousSpectralElementGrid)
     x, y, z = coordinates(grid)
     M = view(grid.vgeo, :, grid.Mid, :)  # mass matrix
-    xC = cell_average(x, M = M)
-    yC = cell_average(y, M = M)
-    zC = cell_average(z, M = M)
+    xC = cellaverage(x, M = M)
+    yC = cellaverage(y, M = M)
+    zC = cellaverage(z, M = M)
     return xC[:], yC[:], zC[:]
 end
 
@@ -124,4 +124,5 @@ function visualize(g::DiscontinuousSpectralElementGrid)
         opacity[] = s
     end
     display(scene)
+    return scene
 end

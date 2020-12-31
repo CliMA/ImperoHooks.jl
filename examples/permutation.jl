@@ -13,17 +13,19 @@ const mpicomm = MPI.COMM_WORLD
 const FT = Float64
 Ω = Circle(-1,1) × Circle(-1,1) × Circle(-1,1)
 dims = ndims(Ω)
-ex, ey, ez = (2,3,4)
+ex, ey, ez = (3,4,2)
 ClimateMachine.gpu_allowscalar(true)
 # Define Grid: might want to loop over element sizes and polynomial orders
-grid = DiscontinuousSpectralElementGrid(Ω, elements = (ex, ey, ez), polynomialorder = (4,4,4), array = ArrayType)
+grid = DiscontinuousSpectralElementGrid(Ω, elements = (ex, ey, ez), polynomialorder = (1,3,2), array = ArrayType)
 
 x, y, z = coordinates(grid)
-##
+
 xC, yC, zC = cellcenters(grid)
+# computes permutation to cartesian index for elements
+# needs lin = reshape(collect(1:length(xC)), (ex, ey, ez))
+# but then xC[p[lin[i,j,k]]] works where i,j,k are cartesian
 function getperm(xC, yC, zC, ex, ey, ez)
     pz = sortperm(zC)
-    tmpZ = reshape(zC[pz], (ex, ey, ez))
     tmpY = reshape(yC[pz], (ex*ey, ez))
     tmp_py = [sortperm(tmpY[:,i]) for i in 1:ez]
     py = zeros(Int64,length(pz))
@@ -32,9 +34,8 @@ function getperm(xC, yC, zC, ex, ey, ez)
         ii = (i-1) * n + 1
         py[ii : ii + n-1] .= tmp_py[i] .+ ii .- 1
     end
-    newY = reshape(yC[pz][py], (ex, ey, ez))
-    newZ = reshape(zC[pz][py], (ex, ey, ez))
-    tmp_px = [sortperm(reshape(xC[pz][py], (ex, ey*ez))[:,i]) for i in 1:ey*ez]
+    tmpX = reshape(xC[pz][py], (ex, ey*ez))
+    tmp_px = [sortperm(tmpX[:,i]) for i in 1:ey*ez]
     px = zeros(Int64,length(pz))
     for i in eachindex(tmp_px)
         n = length(tmp_px[i]) 
@@ -53,13 +54,15 @@ lin = reshape(collect(1:length(xC)), (ex, ey, ez))
 @testset "Unique Permutation" begin
     @test prod( sort(p) .== collect(1:length(p)))
 end
+
 @testset "Check lin" begin
     for i in 1:10
         rng = MersenneTwister(i);
-        ind = lin[rand(rng, 1:ex), rand(rng, 1:ey), rand(rng, 1:ez)]
-        @test newX[ind] == xC[p[ind]]
-        @test newY[ind] == yC[p[ind]]
-        @test newZ[ind] == zC[p[ind]]
+        ix, iy, iz = rand(rng, 1:ex), rand(rng, 1:ey), rand(rng, 1:ez)
+        ind = lin[ix, iy, iz]
+        @test newX[ix, iy, iz] == xC[p[ind]]
+        @test newY[ix, iy, iz] == yC[p[ind]]
+        @test newZ[ix, iy, iz] == zC[p[ind]]
     end
 end
 
