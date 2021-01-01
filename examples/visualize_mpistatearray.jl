@@ -38,16 +38,20 @@ newz = range(-1,1, length = nz)
 newf = zeros((nx,ny,nz))
 checkf = zeros((nx,ny,nz))
 tic = time()
-@threads  for i in 1:nx
+p = gridhelper.element.permutation
+lin = gridhelper.element.cartesianindex
+for i in 1:nx
     for j in 1:ny
         for k in 1:nz
             location = (newx[i], newy[j], newz[k])
-            newf[i,j,k] = getvalue(f, location, gridhelper)
+            findelement(xC, yC, zC, location, p, lin)
+            # newf[i,j,k] = getvalue(f, location, gridhelper)
             checkf[i,j,k] = g(location[1], location[2], location[3])
         end
     end
 end
 toc = time()
+##
 println("Time to interpolate is ", toc - tic)
 println("The error is ", norm(newf - checkf)/ norm(checkf))
 println("The maximum difference is ", maximum(abs.(newf - checkf)))

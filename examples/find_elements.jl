@@ -86,6 +86,7 @@ function findelement(xC, yC, zC, location, p, lin)
     i = minind[1]
     # j 
     currentmin[1] = abs.(yC[p[lin[1,1,1]]] .- location[2])
+    minind[1] = 1
     for i in 2:ey
         current = abs.(yC[p[lin[1,i,1]]] .- location[2])
         if current < currentmin[1]
@@ -96,6 +97,7 @@ function findelement(xC, yC, zC, location, p, lin)
     j = minind[1]
     # k 
     currentmin[1] = abs.(zC[p[lin[1,1,1]]] .- location[3])
+    minind[1] = 1
     for i in 2:ez
         current = abs.(zC[p[lin[1,1, i]]] .- location[3])
         if current < currentmin[1]

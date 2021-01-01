@@ -94,9 +94,9 @@ x, y, z = coordinates(grid)
 xC, yC, zC = cellcenters(grid)
 
 ne = size(x)[2]
-ex = round(Int64, ne / addup(xC, 10^4))
-ey = round(Int64, ne / addup(yC, 10^4))
-ez = round(Int64, ne / addup(zC, 10^4))
+ex = round(Int64, ne / addup(xC, 10^4 * eps(maximum(abs.(x)))))
+ey = round(Int64, ne / addup(yC, 10^4 * eps(maximum(abs.(y)))))
+ez = round(Int64, ne / addup(zC, 10^4 * eps(maximum(abs.(z)))))
 check = ne == ex * ey * ez
 check ? true : error("improper counting")
 p = getperm(xC, yC, zC, ex, ey, ez)
