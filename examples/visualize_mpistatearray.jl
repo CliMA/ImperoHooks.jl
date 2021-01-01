@@ -18,8 +18,8 @@ const FT = Float64
 # Domain
 Ω = Circle(-1,1) × Circle(-1,1) × Circle(-1,1)
 # Discretization
-ex, ey, ez = (2,6,7)
-(npx, npy, npz) = (3, 1,5)
+ex, ey, ez = (3,5,7)
+(npx, npy, npz) = (1,1,1)
 ClimateMachine.gpu_allowscalar(true)
 grid = DiscontinuousSpectralElementGrid(Ω, elements = (ex, ey, ez), polynomialorder = (npx, npy, npz), array = ArrayType)
 gridhelper = GridHelper(grid)
@@ -30,7 +30,7 @@ f = MPIStateArray{FT}(mpicomm, ArrayType, size(x)..., 1)
 g(x,y,z) = 1 - x^2 - y^2 - z^2
 @. f =  g(x,y,z)
 
-newsize = (10, 10, 10)
+newsize = (20, 20, 20)
 nx, ny, nz = newsize
 newx = range(-1,1, length = nx)
 newy = range(-1,1, length = ny)
@@ -40,7 +40,7 @@ checkf = zeros((nx,ny,nz))
 tic = time()
 p = gridhelper.element.permutation
 lin = gridhelper.element.cartesianindex
-for i in 1:nx
+@threads for i in 1:nx
     for j in 1:ny
         for k in 1:nz
             location = (newx[i], newy[j], newz[k])
@@ -60,19 +60,19 @@ errorloc = argmax(abs.(newf - checkf))
 i, j, k = errorloc[1], errorloc[2], errorloc[3]
 println("The largest error is at the point ",(x[i], y[j], z[k]))
 
-##
+## Note always put LScenes before LText for now
 resolution = (3000, 860)
+width = round(Int, resolution[1] / 6)
 scene, layout = layoutscene(resolution = resolution)
+# LScenes first! (bad plots otherwise)
 lscene = layout[2:4, 2:4] = LScene(scene)
-layout[1, 2:4] = LText(scene, "MPIStateArray", textsize = 50)
-
+lscene3 = layout[2:4, 8:10] = LScene(scene)
 lscene2 = layout[2:4, 5:7] = LScene(scene)
+# LTexts next! (bad plots otherwise)
+layout[1, 8:10] = LText(scene, "|Difference|", textsize = 50)
+layout[1, 2:4] = LText(scene, "MPIStateArray", textsize = 50)
 layout[1, 5:7] = LText(scene, "Exact", textsize = 50)
 
-lscene3 = layout[2:4, 8:10] = LScene(scene)
-layout[1, 8:10] = LText(scene, "|Difference|", textsize = 50)
-
-width = round(Int, resolution[1] / 6)
 layout[1,1] = LText(scene, "Menu", width = width, textsize = 50)
 layout[1,11] = LText(scene, "Menu", width = width, textsize = 50)
 
@@ -88,8 +88,14 @@ lowerclim_node2 = lowerclim_slider2.value
 
 clims = @lift((quantile(f[:], $lowerclim_node) , quantile(f[:], $upperclim_node)))
 cmap_rgb = to_colormap(:balance);
-volume!(lscene, -1..1, -1..1, -1..1, newf, colormap = cmap_rgb, colorrange = clims, camera = cam3d!)
-volume!(lscene2, -1..1, -1..1, -1..1, checkf, colormap = cmap_rgb, colorrange = clims, camera = cam3d!)
+
+vs1 = volume!(lscene, -1..1, -1..1, -1..1, newf, colormap = cmap_rgb, colorrange = clims, camera = cam3d!, width = width)
+# axis = scene.children[1].plots[1]
+# axis[:names"][:axisnames] = ("up", "down", "left")
+# axis[:names][:textsize] = (10.0, 10.0, 20.0)
+
+volume!(lscene2, -1..1, -1..1, -1..1, checkf, camera = cam3d!, colormap = cmap_rgb, colorrange = clims)
+
 Δf = abs.(checkf - newf)
 clims2 = @lift((quantile(Δf[:], $lowerclim_node2) , quantile(Δf[:], $upperclim_node2)))
 volume!(lscene3, -1..1, -1..1, -1..1, Δf, colormap = cmap_rgb, colorrange = clims2, camera = cam3d!)
@@ -111,5 +117,5 @@ layout[2, 11] = vgrid!(
     LText(scene, upperclim_string2, width = nothing),
     upperclim_slider2,
 )
-display(scene)
 
+display(scene)
