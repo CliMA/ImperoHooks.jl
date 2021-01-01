@@ -1,3 +1,17 @@
+using ImperoHooks
+using ClimateMachine
+using ClimateMachine.Mesh.Grids
+using Impero, MPI
+using Makie, GLMakie, AbstractPlotting
+using ImageTransformations, Colors
+using AbstractPlotting.MakieLayout
+using GaussQuadrature, Random, Test
+using Statistics, Printf
+using ClimateMachine.MPIStateArrays
+using Base.Threads, LinearAlgebra
+include(pwd() * "/examples/gridhelper.jl")
+
+
 import Base: ndims, getindex
 abstract type TensorField{S,T} end
 
@@ -29,18 +43,7 @@ function broadcast!(identity, ϕ::ScalarField, φ::ScalarField)
 end
 
 ## Test
-using ImperoHooks
-using ClimateMachine
-using ClimateMachine.Mesh.Grids
-using Impero, MPI
-using Makie, GLMakie, AbstractPlotting
-using ImageTransformations, Colors
-using AbstractPlotting.MakieLayout
-using GaussQuadrature, Random, Test
-using Statistics, Printf
-using ClimateMachine.MPIStateArrays
-using Base.Threads, LinearAlgebra
-include(pwd() * "/examples/gridhelper.jl")
+
 ex, ey, ez = (3,5,7)
 (npx, npy, npz) = (1,1,1)
 ClimateMachine.gpu_allowscalar(true)
@@ -52,3 +55,34 @@ x, y, z = coordinates(grid)
 ϕ(0.1, 0.2, 0.3)
 ϕ.data .= y
 ϕ(0.1, 0.2, 0.3)
+
+nx = ny = nz = 10
+xnew = range(-1,1, length=nx)
+ynew = range(-1,1, length=ny)
+znew = range(-1,1, length=nz)
+##
+function (ϕ::ScalarField)(xlist::StepRangeLen,ylist::StepRangeLen,zlist::StepRangeLen; threads = false)
+    newfield = zeros(length(xlist), length(ylist), length(zlist))
+    if threads
+        @threads for k in eachindex(zlist)
+            for j in eachindex(ylist)
+                for i in eachindex(xlist)
+                        newfield[i,j,k] = getvalue(ϕ.data, (x[i],y[j],z[k]), ϕ.grid)
+                end
+            end
+        end
+    else
+        for k in eachindex(zlist)
+            for j in eachindex(ylist)
+                for i in eachindex(xlist)
+                        newfield[i,j,k] = getvalue(ϕ.data, (x[i],y[j],z[k]), ϕ.grid)
+                end
+            end
+        end
+    end
+    return newfield
+end
+##
+
+interpolated_ϕ = ϕ(xnew, ynew, znew, threads = false)
+
