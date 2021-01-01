@@ -14,7 +14,7 @@ const mpicomm = MPI.COMM_WORLD
 const FT = Float64
 Ω = Circle(-1,1) × Circle(-1,1) × Circle(-1,1)
 dims = ndims(Ω)
-ex, ey, ez = (2,3,4) .* 10
+ex, ey, ez = (2,3,4)
 ClimateMachine.gpu_allowscalar(true)
 # Define Grid: might want to loop over element sizes and polynomial orders
 grid = DiscontinuousSpectralElementGrid(Ω, elements = (ex, ey, ez), polynomialorder = (4,4,4), array = ArrayType)
@@ -106,6 +106,8 @@ function findelement(xC, yC, zC, location, p, lin)
     k = minind[1]
     return p[lin[i,j,k]]
 end
+
+addup(xC, tol) = sum(abs.(xC[1] .- xC) .≤ eps(tol * maximum(abs.(xC))))
 
 xC, yC, zC = cellcenters(grid)
 p = getperm(xC, yC, zC, ex, ey, ez)
