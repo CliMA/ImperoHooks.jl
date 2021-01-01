@@ -119,16 +119,13 @@ function lagrange_eval_nocheck(f, newx, newy, newz, rx, ry, rz, ωx, ωy, ωz)
     for k in eachindex(rz)
             Δz = (newz .- rz[k])
             polez = ωz[k] ./ Δz
-            kk = k
         for j in eachindex(ry)
                 Δy = (newy .- ry[j])
                 poley = ωy[j] ./ Δy
-                jj = j
             for i in eachindex(rx)
                     Δx = (newx .- rx[i])
                     polex = ωx[i] ./ Δx
-                    ii = i
-                    numerator[1] += f[ii,jj,kk] * polex * poley * polez
+                    numerator[1] += f[i,j,k] * polex * poley * polez
                     denominator[1] += polex * poley * polez
             end
         end

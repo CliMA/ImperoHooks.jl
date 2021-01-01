@@ -107,7 +107,6 @@ function findelement(xC, yC, zC, location, p, lin)
     return p[lin[i,j,k]]
 end
 
-addup(xC, tol) = sum(abs.(xC[1] .- xC) .≤ eps(tol * maximum(abs.(xC))))
 
 xC, yC, zC = cellcenters(grid)
 p = getperm(xC, yC, zC, ex, ey, ez)

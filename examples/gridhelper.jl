@@ -39,14 +39,16 @@ struct ElementHelper{S, T, U, V, W}
     cartesianindex::W
 end
 
+addup(xC, tol) = sum(abs.(xC[1] .- xC) .≤ tol)
+
 function ElementHelper(g::DiscontinuousSpectralElementGrid)
     npx, npy, npz = polynomialorders(grid)
     x, y, z = coordinates(grid)
     xC, yC, zC = cellcenters(grid)
     ne = size(x)[2]
-    ex = round(Int64, ne / addup(xC, 10^4))
-    ey = round(Int64, ne / addup(yC, 10^4))
-    ez = round(Int64, ne / addup(zC, 10^4))
+    ex = round(Int64, ne / addup(xC, 10^4 * eps(maximum(abs.(x)))))
+    ey = round(Int64, ne / addup(yC, 10^4 * eps(maximum(abs.(y)))))
+    ez = round(Int64, ne / addup(zC, 10^4 * eps(maximum(abs.(z)))))
     check = ne == ex * ey * ez
     check ? true : error("improper counting")
     p = getperm(xC, yC, zC, ex, ey, ez)
@@ -80,8 +82,8 @@ end
 # quadrature points
 Ω = Circle(-1,1) × Circle(-1,1) × Circle(-1,1)
 dims = ndims(Ω)
-ex, ey, ez = (3,4,5) 
-(npx, npy, npz) = (1, 6, 2)
+ex, ey, ez = (3,4,5) .* 10
+(npx, npy, npz) = (1,2,3) # needs to be at least these polynomial orders due to last test
 ClimateMachine.gpu_allowscalar(true)
 # Define Grid: might want to loop over element sizes and polynomial orders
 grid = DiscontinuousSpectralElementGrid(Ω, elements = (ex, ey, ez), polynomialorder = (npx, npy, npz), array = ArrayType)
@@ -139,4 +141,10 @@ end
     @. f = y
     location = (0.1, -0.9, -0.3)
     @test location[2] ≈ getvalue(f, location, gridhelper)
+    @. f = x + y^2 + z^3
+    location = (0.1, -0.9, -0.3)
+    value = location[1] + location[2]^2 + location[3]^3
+    @test value ≈ getvalue(f, location, gridhelper)
 end
+
+
