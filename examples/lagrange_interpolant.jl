@@ -247,7 +247,7 @@ end
 function getvalue(f, location, gridhelper::GridHelper)
     ih = gridhelper.interpolation
     eh = gridhelper.element
-    npx, npy, npz = polynomialorders(grid)
+    npx, npy, npz = polynomialorders(gridhelper.grid)
     fl = reshape(f, (npx+1, npy+1, npz+1, prod(eh.cartesiansizes)))
     ip = getvalue(fl, eh.cellcenters..., location, 
             eh.permutation, eh.cartesianindex, ih.cartesianindex, 
