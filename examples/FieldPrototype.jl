@@ -64,7 +64,7 @@ x, y, z = coordinates(grid)
     @test ϕ(0.1, 0.2, 0.3) ≈ 0.3
 end
 ##
-Ω = Circle(-1,1) × Circle(-1,1)
+Ω = Circle(0,2) × Circle(-4,2)
 elements =  (3,5,7)[1:ndims(Ω)]
 polynomialorder = (1,1,1)[1:ndims(Ω)]
 ClimateMachine.gpu_allowscalar(true)
