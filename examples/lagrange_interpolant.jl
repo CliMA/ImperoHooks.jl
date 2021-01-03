@@ -113,6 +113,40 @@ function lagrange_eval(f, newx, newy, newz, rx, ry, rz, ωx, ωy, ωz)
     return numerator[1] / denominator[1]
 end
 
+function lagrange_eval(f, newx, newy, rx, ry, ωx, ωy)
+    icheck = checkgl_2(newx, rx)
+    jcheck = checkgl_2(newy, ry)
+    numerator = zeros(1)
+    denominator = zeros(1)
+
+    for j in eachindex(ry)
+        if jcheck ==0
+            Δy = (newy .- ry[j])
+            poley = ωy[j] ./ Δy
+            jj = j
+        else
+            poley = 1.0
+            j = eachindex(ry)[end]
+            jj = jcheck
+        end
+        for i in eachindex(rx)
+            if icheck == 0
+                Δx = (newx .- rx[i])
+                polex = ωx[i] ./ Δx
+                ii = i
+            else
+                polex = 1.0
+                i = eachindex(rx)[end]
+                ii = icheck
+            end
+            numerator[1] += f[ii,jj] * polex * poley 
+            denominator[1] += polex * poley 
+        end
+    end
+    return numerator[1] / denominator[1]
+end
+
+
 function lagrange_eval_nocheck(f, newx, newy, newz, rx, ry, rz, ωx, ωy, ωz)
     numerator = zeros(1)
     denominator = zeros(1)
@@ -177,6 +211,21 @@ function getvalue(fl, xC, yC, zC, location, p, lin, linlocal, x, y, z, rx, ry, r
     newz = 2 * (location[3] - zmin) / (zmax - zmin) - 1
 
     return lagrange_eval(view(fl,:,:,:,e), newx, newy, newz, rx, ry, rz, ωx, ωy, ωz)
+end
+
+function getvalue(fl, xC, yC, location, p, lin, linlocal, x, y, rx, ry,  ωx, ωy)
+    e = findelement(xC, yC, location, p, lin)
+    # need bounds to rescale
+    xmax = x[linlocal[npx+1,1,1], e]
+    xmin = x[linlocal[1,1,1], e]
+    ymax = y[linlocal[1,npy+1,1], e]
+    ymin = y[linlocal[1,1,1], e]
+
+    # interpolate to new point
+    newx = 2 * (location[1] - xmin) / (xmax - xmin) - 1
+    newy = 2 * (location[2] - ymin) / (ymax - ymin) - 1
+
+    return lagrange_eval(view(fl,:,:,e), newx, newy, rx, ry, ωx, ωy)
 end
 
 

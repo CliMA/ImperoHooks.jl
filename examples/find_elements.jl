@@ -53,7 +53,7 @@ function findlocation(x, y, z, location)
     return [minval, (ijk, e)]
 end
 
-function findelement(x,y,z, location)
+function findelement(x,y,z, location::Tuple)
     for e in 1:size(x)[2]
         xmin, xmax = extrema(x[:,e])
         if  xmin ≤ location[1] ≤ xmax
@@ -70,6 +70,8 @@ function findelement(x,y,z, location)
     return nothing
 end
 
+
+# 3D version
 function findelement(xC, yC, zC, location, p, lin)
     ex, ey, ez = size(lin)
     # i 
@@ -107,6 +109,35 @@ function findelement(xC, yC, zC, location, p, lin)
     end
     k = minind[1]
     return p[lin[i,j,k]]
+end
+
+# 2D version
+function findelement(xC, yC, location, p, lin)
+    ex, ey = size(lin)
+    # i 
+    currentmin = ones(1)
+    minind = ones(Int64, 1)
+    currentmin[1] = abs.(xC[p[lin[1,1]]] .- location[1])
+    for i in 2:ex
+        current = abs.(xC[p[lin[i,1]]] .- location[1])
+        if current < currentmin[1]
+            currentmin[1] = current
+            minind[1] = i
+        end
+    end
+    i = minind[1]
+    # j 
+    currentmin[1] = abs.(yC[p[lin[1,1]]] .- location[2])
+    minind[1] = 1
+    for i in 2:ey
+        current = abs.(yC[p[lin[1,i]]] .- location[2])
+        if current < currentmin[1]
+            currentmin[1] = current
+            minind[1] = i
+        end
+    end
+    j = minind[1]
+    return p[lin[i,j]]
 end
 
 

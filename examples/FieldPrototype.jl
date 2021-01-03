@@ -20,12 +20,16 @@ struct ScalarField{S,T} <: TensorField{0,0}
     grid::T
 end
 
-function (ϕ::ScalarField)(x::Tuple{Number, Number, Number})
+function (ϕ::ScalarField)(x::Tuple)
     return getvalue(ϕ.data, x, ϕ.grid)
 end
 
 function (ϕ::ScalarField)(x::Number,y::Number,z::Number)
     return getvalue(ϕ.data, (x,y,z), ϕ.grid)
+end
+
+function (ϕ::ScalarField)(x::Number,y::Number)
+    return getvalue(ϕ.data, (x,y), ϕ.grid)
 end
 
 getindex(ϕ::ScalarField, i::Int) = ϕ.data[i]
@@ -43,19 +47,38 @@ function broadcast!(identity, ϕ::ScalarField, φ::ScalarField)
 end
 
 ## Test
-
-ex, ey, ez = (3,5,7)
-(npx, npy, npz) = (1,1,1)
+Ω = Circle(-1,1) × Circle(-1,1) × Circle(-1,1)
+ex, ey, ez = (3,5,7)[1:ndims(Ω)]
+(npx, npy, npz) = (1,1,1)[1:ndims(Ω)]
 ClimateMachine.gpu_allowscalar(true)
 grid = DiscontinuousSpectralElementGrid(Ω, elements = (ex, ey, ez), polynomialorder = (npx, npy, npz), array = ArrayType)
 gridhelper = GridHelper(grid)
 x, y, z = coordinates(grid)
 ϕ =  ScalarField(copy(x), gridhelper)
-
-ϕ(0.1, 0.2, 0.3)
-ϕ.data .= y
-ϕ(0.1, 0.2, 0.3)
-
+@testset "Check Interpolation 3D" begin
+    ϕ.data .= x
+    @test ϕ(0.1, 0.2, 0.3) ≈ 0.1
+    ϕ.data .= y
+    @test ϕ(0.1, 0.2, 0.3) ≈ 0.2
+    ϕ.data .= z
+    @test ϕ(0.1, 0.2, 0.3) ≈ 0.3
+end
+##
+Ω = Circle(-1,1) × Circle(-1,1)
+elements =  (3,5,7)[1:ndims(Ω)]
+polynomialorder = (1,1,1)[1:ndims(Ω)]
+ClimateMachine.gpu_allowscalar(true)
+grid = DiscontinuousSpectralElementGrid(Ω, elements = elements, polynomialorder = polynomialorder, array = ArrayType)
+gridhelper = GridHelper(grid)
+x, y, z = coordinates(grid)
+ϕ =  ScalarField(copy(x), gridhelper)
+@testset "Check Interpolation 2D" begin
+    ϕ.data .= x
+    @test ϕ(0.1, 0.2) ≈ 0.1
+    ϕ.data .= y
+    @test ϕ(0.1, 0.2) ≈ 0.2
+end
+##
 nx = ny = nz = 10
 xnew = range(-1,1, length=nx)
 ynew = range(-1,1, length=ny)
