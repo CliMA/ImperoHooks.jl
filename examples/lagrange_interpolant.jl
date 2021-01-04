@@ -205,7 +205,7 @@ function getvalue(fl, xC, yC, zC, location, p, lin, linlocal, x, y, z, rx, ry, r
     zmax = z[linlocal[1,1,npz+1], e]
     zmin = z[linlocal[1,1,1], e]
 
-    # interpolate to new point
+    # rescale new point to [-1,1]³
     newx = 2 * (location[1] - xmin) / (xmax - xmin) - 1
     newy = 2 * (location[2] - ymin) / (ymax - ymin) - 1
     newz = 2 * (location[3] - zmin) / (zmax - zmin) - 1
@@ -221,7 +221,7 @@ function getvalue(fl, xC, yC, location, p, lin, linlocal, x, y, rx, ry,  ωx, ω
     ymax = y[linlocal[1,npy+1,1], e]
     ymin = y[linlocal[1,1,1], e]
 
-    # interpolate to new point
+    # rescale new point to [-1,1]²
     newx = 2 * (location[1] - xmin) / (xmax - xmin) - 1
     newy = 2 * (location[2] - ymin) / (ymax - ymin) - 1
 

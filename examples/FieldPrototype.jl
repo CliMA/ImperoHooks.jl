@@ -105,7 +105,28 @@ function (ϕ::ScalarField)(xlist::StepRangeLen,ylist::StepRangeLen,zlist::StepRa
     end
     return newfield
 end
+
+function (ϕ::ScalarField)(xlist::StepRangeLen,ylist::StepRangeLen; threads = false)
+    newfield = zeros(length(xlist), length(ylist))
+    if threads
+    @threads for j in eachindex(ylist)
+            for i in eachindex(xlist)
+                newfield[i,j] = getvalue(ϕ.data, (x[i],y[j]), ϕ.grid)
+            end
+        end
+    else
+        for j in eachindex(ylist)
+            for i in eachindex(xlist)
+                    newfield[i,j] = getvalue(ϕ.data, (x[i],y[j]), ϕ.grid)
+            end
+        end
+    end
+    return newfield
+end
 ##
 
-interpolated_ϕ = ϕ(xnew, ynew, znew, threads = false)
+interpolated_ϕ = ϕ(xnew, ynew, threads = false)
+
+##
+AbstractPlotting.contourf(xnew, ynew, interpolated_ϕ)
 
