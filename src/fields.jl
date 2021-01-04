@@ -1,5 +1,6 @@
 using Base.Threads, LinearAlgebra
 import Base: ndims, getindex, broadcast!, broadcastable
+export ScalarField
 
 export ndims
 
