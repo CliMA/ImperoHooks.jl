@@ -25,7 +25,7 @@ getindex(ϕ::ScalarField, i::Int) = ϕ.data[i]
 
 ndims(ϕ::ScalarField) = ndims(ϕ.data)
 
-broadcastable(ϕ::ScalarField) = ϕ # or maybe do ϕ.data?
+broadcastable(ϕ::ScalarField) = ϕ 
 
 function broadcast!(identity, ϕ::ScalarField, x::AbstractArray) 
     ϕ.data .= x 
