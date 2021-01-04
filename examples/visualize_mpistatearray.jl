@@ -9,7 +9,9 @@ using GaussQuadrature, Random, Test
 using Statistics, Printf
 using ClimateMachine.MPIStateArrays
 using Base.Threads, LinearAlgebra
-include(pwd() * "/examples/gridhelper.jl")
+import Impero: Circle
+import ImperoHooks: ScalarField
+# include(pwd() * "/examples/gridhelper.jl")
 ##
 ClimateMachine.init()
 const ArrayType = ClimateMachine.array_type()
@@ -25,11 +27,12 @@ grid = DiscontinuousSpectralElementGrid(Ω, elements = (ex, ey, ez), polynomialo
 gridhelper = GridHelper(grid)
 x, y, z = coordinates(grid)
 xC, yC, zC = cellcenters(grid)
+ϕ = ScalarField(copy(x), gridhelper)
 ##
-f = MPIStateArray{FT}(mpicomm, ArrayType, size(x)..., 1)
+f = MPIStateArray{FT}(mpicomm, ArrayType, size(x)...,1)
 g(x,y,z) = 1 - x^2 - y^2 - z^2
 @. f =  g(x,y,z)
-
+@. ϕ.data  = f[:, :, 1]
 newsize = (20, 20, 20)
 nx, ny, nz = newsize
 newx = range(-1,1, length = nx)
@@ -51,6 +54,9 @@ lin = gridhelper.element.cartesianindex
     end
 end
 toc = time()
+# can also use 
+ϕf = ϕ(newx, newy, newz)
+norm(ϕf - newf)
 
 println("Time to interpolate is ", toc - tic)
 println("The error is ", norm(newf - checkf)/ norm(checkf))
