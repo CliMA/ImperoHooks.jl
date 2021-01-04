@@ -6,7 +6,6 @@ using ClimateMachine.MPIStateArrays
 using Impero, Printf, MPI, LinearAlgebra, Statistics, GaussQuadrature
 using ImperoHooks
 import ImperoHooks: launch_volume_divergence!, launch_interface_divergence! 
-include(pwd() * "/test/test_utils.jl")
 
 ClimateMachine.init()
 const ArrayType = ClimateMachine.array_type()

@@ -1,4 +1,4 @@
-using Test, MPI, Impero, Plots, GraphRecipes, LinearAlgebra
+using Test, MPI, Impero, LinearAlgebra
 import Impero: compute
 
 using ClimateMachine
