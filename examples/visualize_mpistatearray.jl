@@ -32,7 +32,7 @@ xC, yC, zC = cellcenters(grid)
 f = MPIStateArray{FT}(mpicomm, ArrayType, size(x)...,1)
 g(x,y,z) = 1 - x^2 - y^2 - z^2
 @. f =  g(x,y,z)
-@. ϕ.data = f[:, :, 1]
+@. ϕ = f[:, :, 1]
 newsize = (20, 20, 20)
 nx, ny, nz = newsize
 newx = range(-1,1, length = nx)

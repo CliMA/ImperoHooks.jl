@@ -1,5 +1,5 @@
 using Base.Threads, LinearAlgebra
-import Base: ndims, getindex, broadcast!, broadcastable
+import Base: ndims, getindex, materialize!, broadcasted
 export ScalarField
 
 export ndims
@@ -24,19 +24,8 @@ end
 
 getindex(ϕ::ScalarField, i::Int) = ϕ.data[i]
 
-ndims(ϕ::ScalarField) = ndims(ϕ.data)
-
-broadcastable(ϕ::ScalarField) = ϕ 
-
-function broadcast!(identity, ϕ::ScalarField, x::AbstractArray) 
-    ϕ.data .= x 
-    return nothing
-end
-
-function broadcast!(identity, ϕ::ScalarField, φ::ScalarField) 
-    ϕ.data .= φ.data
-    return nothing
-end
+materialize!(ϕ::ScalarField, f::Base.Broadcast.Broadcasted) = materialize!(ϕ.data, f)
+broadcasted(identity, ϕ::ScalarField) = broadcasted(Base.identity, ϕ.data)
 
 function (ϕ::ScalarField)(xlist::StepRangeLen,ylist::StepRangeLen,zlist::StepRangeLen; threads = false)
     newfield = zeros(length(xlist), length(ylist), length(zlist))

@@ -7,11 +7,11 @@ gridhelper = GridHelper(grid)
 x, y, z = coordinates(grid)
 ϕ =  ScalarField(copy(x), gridhelper)
 @testset "Check Interpolation 3D" begin
-    ϕ.data .= x
+    ϕ .= x
     @test ϕ(0.1, 0.2, 0.3) ≈ 0.1
-    ϕ.data .= y
+    ϕ .= y
     @test ϕ(0.1, 0.2, 0.3) ≈ 0.2
-    ϕ.data .= z
+    ϕ .= z
     @test ϕ(0.1, 0.2, 0.3) ≈ 0.3
 end
 ##
@@ -24,8 +24,8 @@ gridhelper = GridHelper(grid)
 x, y, z = coordinates(grid)
 ϕ =  ScalarField(copy(x), gridhelper)
 @testset "Check Interpolation 2D" begin
-    ϕ.data .= x
+    ϕ .= x
     @test ϕ(0.1, 0.2) ≈ 0.1
-    ϕ.data .= y
+    ϕ .= y
     @test ϕ(0.1, 0.2) ≈ 0.2
 end
