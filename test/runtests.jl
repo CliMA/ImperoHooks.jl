@@ -17,3 +17,6 @@ include(pwd() * "/test/gradient_divergence_test.jl")
 
 include(pwd() * "/test/impero_algebra_test.jl")
 include(pwd() * "/test/impero_curl_test.jl")
+
+include(pwd() * "/test/gridhelper_test.jl")
+include(pwd() * "/test/permutation_test.jl")

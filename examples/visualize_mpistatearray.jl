@@ -32,12 +32,15 @@ xC, yC, zC = cellcenters(grid)
 f = MPIStateArray{FT}(mpicomm, ArrayType, size(x)...,1)
 g(x,y,z) = 1 - x^2 - y^2 - z^2
 @. f =  g(x,y,z)
-@. ϕ.data  = f[:, :, 1]
+@. ϕ.data = f[:, :, 1]
 newsize = (20, 20, 20)
 nx, ny, nz = newsize
 newx = range(-1,1, length = nx)
 newy = range(-1,1, length = ny)
 newz = range(-1,1, length = nz)
+# can use 
+ϕf = ϕ(newx, newy, newz) # interpolate to the new grid
+
 newf = zeros((nx,ny,nz))
 checkf = zeros((nx,ny,nz))
 tic = time()
@@ -54,9 +57,7 @@ lin = gridhelper.element.cartesianindex
     end
 end
 toc = time()
-# can also use 
-ϕf = ϕ(newx, newy, newz)
-norm(ϕf - newf)
+
 
 println("Time to interpolate is ", toc - tic)
 println("The error is ", norm(newf - checkf)/ norm(checkf))
